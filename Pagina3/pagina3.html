@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Labirinto do Coração ❤️</title>
+    <title>Snoopy: A Aventura no Labirinto</title>
 
     <style>
         body {
@@ -44,6 +44,7 @@
             border-radius: 5px;
             max-width: 100%;
             height: auto;
+            image-rendering: pixelated;
         }
 
         .game-info {
@@ -74,19 +75,18 @@
 </head>
 <body>
 
-    <h1 class="header-title">Labirinto do Coração</h1>
+    <h1 class="header-title">Snoopy no Labirinto</h1>
 
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         <div class="game-info">
             <div>Vidas: <span id="lives">3</span></div>
-            <div>Corações: <span id="score">0</span></div>
+            <div>Woodstocks: <span id="score">0</span></div>
         </div>
     </div>
 
     <div id="message-box">
-        Use as setas do teclado para me guiar até os corações!
-    </div>
+        </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -95,10 +95,14 @@
         const scoreEl = document.getElementById('score');
         const messageBox = document.getElementById('message-box');
 
-        const gridSize = 20;
-        const playerEmoji = '🥰';
-        const heartEmoji = '❤️';
-        const ghostEmoji = '👻';
+        const gridSize = 30; // Tamanho de cada "casa" do labirinto. Não mude isso.
+
+        // ### SUAS NOVAS VARIÁVEIS DE TAMANHO INDIVIDUAL ###
+        // Altere estes valores para testar os tamanhos de cada personagem.
+        const snoopySize = 40;    // Tamanho do Snoopy (um pouco maior que a casa)
+        const woodstockSize = 22; // Tamanho do Woodstock (menorzin para caber melhor)
+        const catSize = 30;       // Tamanho dos Gatos (padrão da casa)
+        // #################################################
 
         const mapCols = 22;
         const mapRows = 22;
@@ -108,7 +112,19 @@
         let player, ghosts, hearts, score, lives, level;
         let gameActive = true;
 
-        // Mapa do labirinto
+        const playerImg = new Image();
+        playerImg.src = 'imagens/snoopy.png'; 
+
+        const heartImg = new Image();
+        heartImg.src = 'imagens/woodstock.png';
+
+        const ghostImg = new Image();
+        ghostImg.src = 'imagens/cat.png';
+
+        const playerEmoji = '🐶';
+        const heartEmoji = '🐤';
+        const ghostEmoji = '🐱';
+
         const map = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
@@ -137,54 +153,43 @@
         const isMobile = 'ontouchstart' in window;
         let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
         let lastMoveTime = 0;
-        const moveDelay = 100; // Delay em ms entre os movimentos para não ser instantâneo
+        const moveDelay = 100;
 
         function setupMobileControls() {
             canvas.addEventListener('touchstart', e => { e.preventDefault(); touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, { passive: false });
             canvas.addEventListener('touchend', e => { e.preventDefault(); touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY; handleSwipe(); }, { passive: false });
         }
-        
         function handleSwipe() {
             const swipeThreshold = 30;
             const diffX = touchEndX - touchStartX;
             const diffY = touchEndY - touchStartY;
             if (!gameActive) {
-                if (Math.abs(diffX) < swipeThreshold && Math.abs(diffY) < swipeThreshold) { init(); gameLoop(); }
+                if (Math.abs(diffX) < swipeThreshold && Math.abs(diffY) < swipeThreshold) { init(); }
                 return;
             }
             if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > swipeThreshold) {
-                    if (diffX > 0) { player.dx = 1; player.dy = 0; }
-                    else { player.dx = -1; player.dy = 0; }
-                }
+                if (Math.abs(diffX) > swipeThreshold) { if (diffX > 0) { player.dx = 1; player.dy = 0; } else { player.dx = -1; player.dy = 0; } }
             } else {
-                if (Math.abs(diffY) > swipeThreshold) {
-                    if (diffY > 0) { player.dx = 0; player.dy = 1; }
-                    else { player.dx = 0; player.dy = -1; }
-                }
+                if (Math.abs(diffY) > swipeThreshold) { if (diffY > 0) { player.dx = 0; player.dy = 1; } else { player.dx = 0; player.dy = -1; } }
             }
         }
-
         function init() {
             score = 0; level = 1; lives = 3; gameActive = true;
             player = { x: 1, y: 1, dx: 0, dy: 0 };
             spawnCollectibles();
             spawnGhosts();
             updateUI();
-            if (isMobile) { messageBox.textContent = "Deslize o dedo para me guiar!"; } 
-            else { messageBox.textContent = "Use as setas do teclado para começar!"; }
+            if (isMobile) { messageBox.textContent = "Ajude o Snoopy a achar os Woodstocks!"; } 
+            else { messageBox.textContent = "Use as setas para ajudar o Snoopy!"; }
+            if(!gameActive) gameLoop();
         }
-
         function spawnCollectibles() {
             hearts = [];
             for (let y = 0; y < map.length; y++) {
-                for (let x = 0; x < map[y].length; x++) {
-                    if (map[y][x] === 0 && Math.random() < 0.2) hearts.push({ x, y });
-                }
+                for (let x = 0; x < map[y].length; x++) { if (map[y][x] === 0 && Math.random() < 0.2) hearts.push({ x, y }); }
             }
             if(hearts.length === 0) spawnCollectibles();
         }
-
         function spawnGhosts() {
             ghosts = [];
             for (let i = 0; i < level + 1; i++) {
@@ -196,7 +201,6 @@
                 ghosts.push({ x: ghostX, y: ghostY, dx: 0, dy: 0 });
             }
         }
-        
         function updateUI() {
             livesEl.textContent = lives;
             scoreEl.textContent = score;
@@ -207,36 +211,51 @@
             ctx.fillStyle = '#333';
             for (let y = 0; y < map.length; y++) {
                 for (let x = 0; x < map[y].length; x++) {
-                    if (map[y][x] === 1) ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
+                    if (map[y][x] === 1) { ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize); }
                 }
             }
-            ctx.font = `${gridSize * 0.9}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            const drawEmoji = (emoji, x, y) => ctx.fillText(emoji, x * gridSize + gridSize / 2, y * gridSize + gridSize / 2 + 1);
-            hearts.forEach(h => drawEmoji(heartEmoji, h.x, h.y));
-            ghosts.forEach(g => drawEmoji(ghostEmoji, g.x, g.y));
-            drawEmoji(playerEmoji, player.x, player.y);
+            
+            const drawEmoji = (emoji, x, y, size) => {
+                const fontSize = size * 0.9;
+                ctx.font = `${fontSize}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const centerX = x * gridSize + gridSize / 2;
+                const centerY = y * gridSize + gridSize / 2;
+                ctx.fillText(emoji, centerX, centerY);
+            };
+            
+            // ### DESENHO COM TAMANHOS INDIVIDUAIS ###
+            let offset; // Variável para o cálculo de centralização
+
+            // Desenha os Woodstocks
+            offset = (gridSize - woodstockSize) / 2;
+            hearts.forEach(h => {
+                (heartImg.complete && heartImg.naturalHeight !== 0) ? ctx.drawImage(heartImg, h.x * gridSize + offset, h.y * gridSize + offset, woodstockSize, woodstockSize) : drawEmoji(heartEmoji, h.x, h.y, woodstockSize);
+            });
+
+            // Desenha os Gatos
+            offset = (gridSize - catSize) / 2;
+            ghosts.forEach(g => {
+                (ghostImg.complete && ghostImg.naturalHeight !== 0) ? ctx.drawImage(ghostImg, g.x * gridSize + offset, g.y * gridSize + offset, catSize, catSize) : drawEmoji(ghostEmoji, g.x, g.y, catSize);
+            });
+
+            // Desenha o Snoopy
+            offset = (gridSize - snoopySize) / 2;
+            (playerImg.complete && playerImg.naturalHeight !== 0) ? ctx.drawImage(playerImg, player.x * gridSize + offset, player.y * gridSize + offset, snoopySize, snoopySize) : drawEmoji(playerEmoji, player.x, player.y, snoopySize);
         }
 
-        function isWall(x, y) {
-            return map[y] && map[y][x] === 1;
-        }
-
+        function isWall(x, y) { return map[y] && map[y][x] === 1; }
         function update() {
+            if (!gameActive) return;
             const now = Date.now();
-            if (now - lastMoveTime < moveDelay) return; // Controla a velocidade geral
-            lastMoveTime = 1000;
-
+            if (now - lastMoveTime < moveDelay) return;
+            lastMoveTime = 1;
             const nextX = player.x + player.dx;
             const nextY = player.y + player.dy;
-            if (!isWall(nextX, nextY)) {
-                player.x = nextX;
-                player.y = nextY;
-            }
-
+            if (!isWall(nextX, nextY)) { player.x = nextX; player.y = nextY; }
             ghosts.forEach(g => {
-                if (Math.random() < 0.2) { // Chance maior de mudar de direção
+                if (Math.random() < 0.2) {
                     const moves = [{dx:0, dy:1}, {dx:0, dy:-1}, {dx:1, dy:0}, {dx:-1, dy:0}];
                     const move = moves[Math.floor(Math.random() * moves.length)];
                     g.dx = move.dx; g.dy = move.dy;
@@ -248,7 +267,6 @@
             checkCollisions();
             draw();
         }
-
         function checkCollisions() {
             const heartIndex = hearts.findIndex(h => h.x === player.x && h.y === player.y);
             if (heartIndex > -1) { hearts.splice(heartIndex, 1); score++; updateUI();
@@ -256,35 +274,31 @@
             }
             if (ghosts.some(g => g.x === player.x && g.y === player.y)) loseLife();
         }
-        
         function loseLife() {
             lives--; updateUI();
             if (lives <= 0) gameOver(false);
             else {
-                messageBox.textContent = `Você foi pego! Cuidado!`;
+                messageBox.textContent = `Snoopy foi pego pelos gatos!`;
                 player.x = 1; player.y = 1; player.dx = 0; player.dy = 0;
                 spawnGhosts();
             }
         }
-        
         function levelUp() {
-            level++; messageBox.textContent = `Nível ${level}! Mais difícil!`;
+            level++; messageBox.textContent = `Nível ${level}! Mais gatos!`;
             player.x = 1; player.y = 1; player.dx = 0; player.dy = 0;
             spawnCollectibles();
             spawnGhosts();
         }
-        
         function gameOver(win) {
             gameActive = false;
-            if (win) messageBox.textContent = "Parabéns! Você coletou todos os corações!";
+            if (win) { messageBox.textContent = "Parabéns! Você encontrou todos os Woodstocks!"; }
             else {
                 if(isMobile) messageBox.textContent = `Fim de Jogo! Toque para recomeçar.`;
                 else messageBox.textContent = `Fim de Jogo! Pressione 'Enter' para recomeçar.`;
             }
         }
-
         document.addEventListener('keydown', e => {
-            if (!gameActive && e.key === 'Enter') { init(); gameLoop(); return; }
+            if (!gameActive && e.key === 'Enter') { init(); return; }
             if (gameActive) {
                 if (e.key === 'ArrowUp') { player.dx = 0; player.dy = -1; }
                 else if (e.key === 'ArrowDown') { player.dx = 0; player.dy = 1; }
@@ -292,19 +306,16 @@
                 else if (e.key === 'ArrowRight') { player.dx = 1; player.dy = 0; }
             }
         });
-        
-        // ### CORREÇÃO DA VELOCIDADE DO JOGO ###
-        // Voltamos a usar requestAnimationFrame para a máxima fluidez
         function gameLoop() {
             if(!gameActive) return;
-            update(); // A função update agora controla o tempo entre os movimentos
+            update();
             requestAnimationFrame(gameLoop);
         }
-
-        // --- INICIALIZAÇÃO DO JOGO ---
+        
         if (isMobile) {
             setupMobileControls();
         }
+        // O jogo inicia e desenha o mapa/emojis, trocando para as imagens quando carregadas.
         init();
         gameLoop();
 
