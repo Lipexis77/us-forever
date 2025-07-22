@@ -10,36 +10,42 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #1a1a1a; /* Cor de fundo principal */
+            background-color: #1a1a1a;
             color: white;
             margin: 0;
-            padding: 20px;
+            padding: 10px; /* Reduzido para telas menores */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            box-sizing: border-box; /* Garante que o padding não cause overflow */
+            overflow: hidden; /* Impede o scroll da página */
         }
 
         .header-title {
-            color: red; /* Cor de destaque do título */
+            color: red;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 36px;
+            font-size: 28px; /* Ligeiramente menor para mobile */
             margin-bottom: 10px;
         }
 
         #game-container {
-            background: #333; /* Fundo do container do jogo */
-            padding: 15px;
-            border-radius: 10px; /* Bordas arredondadas */
-            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2); /* Sombra clara */
+            background: #333;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
             display: inline-block;
+            max-width: 100%; /* Garante que o container não ultrapasse a tela */
         }
 
         #gameCanvas {
             background-color: black;
-            border: 2px solid #ff4c4c; /* Borda vermelha no canvas */
+            border: 2px solid #ff4c4c;
             border-radius: 5px;
+            /* Faz o canvas ser responsivo */
+            max-width: 100%;
+            height: auto;
         }
 
         .game-info {
@@ -52,18 +58,20 @@
         }
 
         .game-info span {
-            color: #ff4c4c; /* Cor de destaque para os números */
+            color: #ff4c4c;
             font-family: 'Courier New', Courier, monospace;
         }
         
         #message-box {
-            margin-top: 20px;
+            margin-top: 15px;
             font-family: 'Georgia', serif;
-            font-size: 1.2em;
+            font-size: 1em;
             color: #ccc;
-            height: 40px; /* Altura fixa para evitar que o layout pule */
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
     </style>
 </head>
 <body>
@@ -71,7 +79,7 @@
     <h1 class="header-title">Labirinto do Coração</h1>
 
     <div id="game-container">
-        <canvas id="gameCanvas" width="440" height="440"></canvas>
+        <canvas id="gameCanvas"></canvas>
         <div class="game-info">
             <div>Vidas: <span id="lives">3</span></div>
             <div>Corações: <span id="score">0</span></div>
@@ -83,11 +91,8 @@
     </div>
 
     <script>
-        // --- SCRIPT COMPLETO DO JOGO ---
-
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-
         const livesEl = document.getElementById('lives');
         const scoreEl = document.getElementById('score');
         const messageBox = document.getElementById('message-box');
@@ -98,10 +103,16 @@
         const heartEmoji = '❤️';
         const ghostEmoji = '👻';
 
+        // Ajusta o tamanho do canvas para o labirinto e para ser responsivo
+        const mapCols = 22;
+        const mapRows = 22;
+        canvas.width = mapCols * gridSize;
+        canvas.height = mapRows * gridSize;
+
+
         let player, ghosts, hearts, score, lives, level;
         let gameActive = true;
 
-        // 0 = Vazio, 1 = Parede
         const map = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
@@ -126,6 +137,57 @@
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ];
+        
+        // ### INÍCIO DA LÓGICA PARA MOBILE ###
+        const isMobile = 'ontouchstart' in window;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+
+        function setupMobileControls() {
+            canvas.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: false });
+
+            canvas.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            }, { passive: false });
+        }
+        
+        function handleSwipe() {
+            const swipeThreshold = 30; // Mínimo de pixels para considerar um swipe
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+
+            if (!gameActive) {
+                // Se o jogo acabou, um simples toque (não um swipe) recomeça
+                if (Math.abs(diffX) < swipeThreshold && Math.abs(diffY) < swipeThreshold) {
+                    init();
+                    gameLoop();
+                }
+                return;
+            }
+
+            if (Math.abs(diffX) > Math.abs(diffY)) { // Swipe horizontal
+                if (Math.abs(diffX) > swipeThreshold) {
+                    if (diffX > 0) { player.dx = 1; player.dy = 0; } // Direita
+                    else { player.dx = -1; player.dy = 0; } // Esquerda
+                }
+            } else { // Swipe vertical
+                if (Math.abs(diffY) > swipeThreshold) {
+                    if (diffY > 0) { player.dx = 0; player.dy = 1; } // Baixo
+                    else { player.dx = 0; player.dy = -1; } // Cima
+                }
+            }
+        }
+        // ### FIM DA LÓGICA PARA MOBILE ###
+
 
         function init() {
             score = 0;
@@ -139,19 +201,24 @@
             spawnGhosts();
             updateUI();
             
-            messageBox.textContent = "Use as setas do teclado para começar!";
+            // Altera a mensagem inicial se for mobile
+            if (isMobile) {
+                messageBox.textContent = "Deslize o dedo para me guiar!";
+            } else {
+                messageBox.textContent = "Use as setas do teclado para começar!";
+            }
         }
 
         function spawnCollectibles() {
             hearts = [];
             for (let y = 0; y < map.length; y++) {
                 for (let x = 0; x < map[y].length; x++) {
-                    if (map[y][x] === 0 && Math.random() < 0.2) { // 20% de chance de ter um coração em um espaço vazio
+                    if (map[y][x] === 0 && Math.random() < 0.2) {
                         hearts.push({ x, y });
                     }
                 }
             }
-            if(hearts.length === 0) spawnCollectibles(); // Garante que sempre tenha ao menos um coração
+            if(hearts.length === 0) spawnCollectibles();
         }
 
         function spawnGhosts() {
@@ -161,7 +228,7 @@
                 do {
                     ghostX = Math.floor(Math.random() * (map[0].length - 2)) + 1;
                     ghostY = Math.floor(Math.random() * (map.length - 2)) + 1;
-                } while (map[ghostY][ghostX] === 1 || (ghostX < 5 && ghostY < 5)); // não nascer perto do player
+                } while (map[ghostY][ghostX] === 1 || (ghostX < 5 && ghostY < 5));
                 ghosts.push({ x: ghostX, y: ghostY, dx: 0, dy: 0 });
             }
         }
@@ -174,7 +241,6 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Desenha o mapa (paredes)
             ctx.fillStyle = '#333';
             for (let y = 0; y < map.length; y++) {
                 for (let x = 0; x < map[y].length; x++) {
@@ -184,15 +250,17 @@
                 }
             }
             
-            // Desenha os corações
-            ctx.font = `${gridSize}px Arial`;
-            hearts.forEach(h => ctx.fillText(heartEmoji, h.x * gridSize, (h.y + 1) * gridSize - 2));
+            ctx.font = `${gridSize * 0.9}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-            // Desenha os fantasmas
-            ghosts.forEach(g => ctx.fillText(ghostEmoji, g.x * gridSize, (g.y + 1) * gridSize - 2));
-            
-            // Desenha o jogador
-            ctx.fillText(playerEmoji, player.x * gridSize, (player.y + 1) * gridSize - 2);
+            const drawEmoji = (emoji, x, y) => {
+                 ctx.fillText(emoji, x * gridSize + gridSize / 2, y * gridSize + gridSize / 2 + 1);
+            }
+
+            hearts.forEach(h => drawEmoji(heartEmoji, h.x, h.y));
+            ghosts.forEach(g => drawEmoji(ghostEmoji, g.x, g.y));
+            drawEmoji(playerEmoji, player.x, player.y);
         }
 
         function isWall(x, y) {
@@ -202,17 +270,18 @@
         function update() {
             if (!gameActive) return;
 
-            // Movimenta o jogador
             const nextX = player.x + player.dx;
             const nextY = player.y + player.dy;
             if (!isWall(nextX, nextY)) {
                 player.x = nextX;
                 player.y = nextY;
             }
+            player.dx = 0; // Para o movimento após um passo (estilo clássico de labirinto)
+            player.dy = 0;
 
-            // Movimenta os fantasmas (lógica simples)
+
             ghosts.forEach(g => {
-                if (Math.random() < 0.05) { // Chance de mudar de direção
+                if (Math.random() < 0.05) {
                     const moves = [{dx:0, dy:1}, {dx:0, dy:-1}, {dx:1, dy:0}, {dx:-1, dy:0}];
                     const move = moves[Math.floor(Math.random() * moves.length)];
                     g.dx = move.dx;
@@ -224,17 +293,15 @@
                     g.x = nextGhostX;
                     g.y = nextGhostY;
                 } else {
-                     g.dx = 0; g.dy = 0; // Para se bater na parede
+                    g.dx = 0; g.dy = 0;
                 }
             });
             
-            // Checa colisões
             checkCollisions();
             draw();
         }
 
         function checkCollisions() {
-            // Colisão com corações
             const heartIndex = hearts.findIndex(h => h.x === player.x && h.y === player.y);
             if (heartIndex > -1) {
                 hearts.splice(heartIndex, 1);
@@ -245,7 +312,6 @@
                 }
             }
 
-            // Colisão com fantasmas
             if (ghosts.some(g => g.x === player.x && g.y === player.y)) {
                 loseLife();
             }
@@ -258,7 +324,6 @@
                 gameOver(false);
             } else {
                 messageBox.textContent = `Você foi pego! Cuidado!`;
-                // Reset player e fantasmas
                 player.x = 1;
                 player.y = 1;
                 spawnGhosts();
@@ -267,7 +332,7 @@
         
         function levelUp() {
             level++;
-            messageBox.textContent = `Nível ${level}! Mais rápido e mais difícil!`;
+            messageBox.textContent = `Nível ${level}! Mais difícil!`;
             player.x = 1;
             player.y = 1;
             spawnCollectibles();
@@ -279,7 +344,11 @@
             if (win) {
                 messageBox.textContent = "Parabéns! Você coletou todos os corações!";
             } else {
-                messageBox.textContent = `Fim de Jogo! Pontuação: ${score}. Pressione 'Enter' para recomeçar.`;
+                if(isMobile) {
+                    messageBox.textContent = `Fim de Jogo! Toque para recomeçar.`;
+                } else {
+                    messageBox.textContent = `Fim de Jogo! Pressione 'Enter' para recomeçar.`;
+                }
             }
         }
 
@@ -299,15 +368,18 @@
         });
         
         function gameLoop() {
+            if(!gameActive) return;
             update();
-            if(gameActive) {
-                requestAnimationFrame(gameLoop);
-            }
+            setTimeout(gameLoop, 150); // Controla a velocidade do jogo
         }
 
-        // Inicia o jogo
+        // --- INICIALIZAÇÃO DO JOGO ---
+        if (isMobile) {
+            setupMobileControls();
+        }
         init();
-        gameLoop();
+        draw(); // Desenha o estado inicial antes do loop começar
+        // O loop só começa de verdade com a primeira interação do usuário
 
     </script>
 </body>
