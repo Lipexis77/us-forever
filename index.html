@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Us Forever ❤️</title>
 
-    <audio id="ComoTudoDeveSer" src="Musicas/Como Tudo Deve Ser - Charlie Brown Jr.mp3" preload="auto"></audio>
+    <audio id="localAudioPlayer" src="Musicas/como-tudo-deve-ser.mp3" preload="auto"></audio>
 
     <style>
         /* === ESTILOS GERAIS === */
@@ -43,7 +43,7 @@
             font-size: 24px;
             opacity: 0.5;
             animation: fall linear infinite;
-            user-select: none; /* Impede que o coração seja selecionado */
+            user-select: none;
         }
 
         @keyframes fall {
@@ -104,7 +104,6 @@
             border-color: #ff1f1f;
         }
         
-        /* === BOTÕES STEP 1 E STEP 2 - ESTILO ORIGINAL DESKTOP === */
         .redirect-btn {
             position: absolute;
             top: 210px;
@@ -233,7 +232,6 @@
             background-color: #ff1f1f;
         }
 
-        /* === ESTILO DO CARROSSEL DE VÍDEOS === */
         .carousel-container {
             max-width: 400px;
             width: 90%;
@@ -252,7 +250,7 @@
         .carousel-item {
             width: 100%;
             flex-shrink: 0;
-            height: 570px; /* Altura para Desktop */
+            height: 570px;
             object-fit: cover;
         }
 
@@ -291,6 +289,10 @@
         /* === CSS PARA TELAS PEQUENAS ====== */
         /* ================================== */
         @media (max-width: 600px) {
+            body {
+                overflow-x: hidden; /* Proíbe a rolagem horizontal */
+            }
+
             .header h1 {
                 font-size: 28px;
             }
@@ -308,11 +310,9 @@
                 font-size: 0.9em;
             }
 
-            /* ### A CORREÇÃO ESTÁ AQUI ### */
             .carousel-item {
-                height: auto; /* Remove a altura fixa e deixa a proporção correta */
+                height: auto;
             }
-            /* ########################## */
 
             .redirect-btn, .redirect-btn2 {
                 position: static;
@@ -381,7 +381,7 @@
     </div>
 
     <div class="spotify-player">
-        <iframe src="https://open.spotify.com/embed/track/3QI5bIozef0HZ1kJnA2RdT?si=d32997304b6e4338" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3QI5bIozef0HZ1kJnA2RdT?si=d32997304b6e4338" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
     
     <div class="audio-controls">
@@ -389,120 +389,104 @@
     </div>
 
     <script>
-        // LÓGICA DO CARROSSEL
-        const slidesContainer = document.querySelector(".carousel-slides");
-        const videoItems = document.querySelectorAll(".carousel-item");
-        let currentIndex = 0;
-
-        function manageVideoPlayback() {
-            videoItems.forEach((video, index) => {
-                if (index === currentIndex) {
-                    video.play().catch(error => console.log("Autoplay bloqueado, esperando interação."));
-                } else {
-                    video.pause();
-                    video.currentTime = 0;
-                }
-            });
-        }
-
-        function updateCarousel() {
-            if (slidesContainer) {
-                const offset = -currentIndex * 100;
-                slidesContainer.style.transform = `translateX(${offset}%)`;
-                manageVideoPlayback();
-            }
-        }
-
-        function moveCarousel(direction) {
-            if (videoItems.length > 0) {
-                videoItems[currentIndex].pause();
-                const totalItems = videoItems.length;
-                currentIndex = (currentIndex + direction + totalItems) % totalItems;
-                updateCarousel();
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            if (videoItems.length > 0) {
-                updateCarousel();
-            }
-        });
-
-        // SUAS OUTRAS FUNÇÕES
-        function updateCounter() {
-            const startDate = new Date("2023-11-17T00:00:00");
-            const now = new Date();
-            let diff = now - startDate;
-            let years = Math.floor(diff / 31536000000);
-            diff -= years * 31536000000;
-            let months = Math.floor(diff / 2628000000);
-            diff -= months * 2628000000;
-            let days = Math.floor(diff / 86400000);
-            diff -= days * 86400000;
-            let hours = Math.floor(diff / 3600000);
-            diff -= hours * 3600000;
-            let minutes = Math.floor(diff / 60000);
-            diff -= minutes * 60000;
-            let seconds = Math.floor(diff / 1000);
-            
-            document.getElementById("years").textContent = years;
-            document.getElementById("months").textContent = months;
-            document.getElementById("days").textContent = days;
-            document.getElementById("hours").textContent = hours;
-            document.getElementById("minutes").textContent = minutes;
-            document.getElementById("seconds").textContent = seconds;
-        }
-        setInterval(updateCounter, 1000);
-        updateCounter();
-
-        function createHearts() {
-            const header = document.querySelector('.header');
-            if (!header) return;
-            setInterval(() => {
-                const heart = document.createElement("div");
-                heart.classList.add("heart");
-                heart.textContent = "❤️";
-                heart.style.left = Math.random() * header.offsetWidth + "px";
-                heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
-                header.appendChild(heart);
-                setTimeout(() => heart.remove(), 5000);
-            }, 200);
-        }
-        createHearts();
-
+        // FUNÇÕES GLOBAIS
+        function redirectToPage1() { window.location.href = "Pagina2/pagina2.html"; }
+        function redirectToPage2() { window.location.href = "Pagina3/pagina3.html"; }
         function generatePoetry() {
             document.getElementById("poetryText").textContent = "Em cada olhar que trocamos, encontro um pedaço do paraíso que eu nunca soube que existia, mas que agora é meu tudo.";
             document.getElementById("poetryModal").style.display = "flex";
         }
+        function closeModal() { document.getElementById("poetryModal").style.display = "none"; }
 
-        function closeModal() {
-            document.getElementById("poetryModal").style.display = "none";
-        }
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // --- CARROSSEL ---
+            const slidesContainer = document.querySelector(".carousel-slides");
+            const videoItems = document.querySelectorAll(".carousel-item");
+            let carouselIndex = 0;
 
-        function redirectToPage1() {
-            window.location.href = "Pagina2/pagina2.html";
-        }
+            function manageVideoPlayback() {
+                videoItems.forEach((video, index) => {
+                    if (index === carouselIndex) {
+                        video.play().catch(e => console.log("Vídeo aguardando interação."));
+                    } else {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                });
+            }
 
-        function redirectToPage2() {
-            window.location.href = "Pagina3/pagina3.html";
-        }
-
-        let isPlaying = false;
-        const audio = document.getElementById("ComoTudoDeveSer");
-        const playPauseBtn = document.getElementById("playPauseBtn");
-
-        if (playPauseBtn) {
-            playPauseBtn.addEventListener("click", function() {
-                if (isPlaying) {
-                    audio.pause();
-                    playPauseBtn.textContent = "Play";
-                } else {
-                    audio.play().catch(error => console.log("A reprodução de áudio não pôde ser iniciada:", error));
-                    playPauseBtn.textContent = "Pause";
+            function updateCarousel() {
+                if (slidesContainer) {
+                    slidesContainer.style.transform = `translateX(${-carouselIndex * 100}%)`;
+                    manageVideoPlayback();
                 }
-                isPlaying = !isPlaying;
-            });
-        }
+            }
+
+            window.moveCarousel = (direction) => {
+                if (videoItems.length > 0) {
+                    videoItems[carouselIndex].pause();
+                    carouselIndex = (carouselIndex + direction + videoItems.length) % videoItems.length;
+                    updateCarousel();
+                }
+            };
+            
+            if (videoItems.length > 0) updateCarousel();
+
+            // --- PLAYER DE ÁUDIO LOCAL ---
+            const audioPlayer = document.getElementById("localAudioPlayer");
+            const playPauseBtn = document.getElementById("playPauseBtn");
+
+            if (audioPlayer && playPauseBtn) {
+                playPauseBtn.addEventListener("click", () => {
+                    if (audioPlayer.paused) {
+                        audioPlayer.play().then(() => {
+                            playPauseBtn.textContent = "Pause";
+                        }).catch(error => console.error("Erro ao tocar o áudio:", error));
+                    } else {
+                        audioPlayer.pause();
+                        playPauseBtn.textContent = "Play";
+                    }
+                });
+            }
+            
+            // --- CONTADOR DE TEMPO ---
+            function updateCounter() {
+                const startDate = new Date("2023-11-17T00:00:00");
+                const now = new Date();
+                let diff = now - startDate;
+                let years = Math.floor(diff / 31536000000); diff -= years * 31536000000;
+                let months = Math.floor(diff / 2628000000); diff -= months * 2628000000;
+                let days = Math.floor(diff / 86400000); diff -= days * 86400000;
+                let hours = Math.floor(diff / 3600000); diff -= hours * 3600000;
+                let minutes = Math.floor(diff / 60000); diff -= minutes * 60000;
+                let seconds = Math.floor(diff / 1000);
+                document.getElementById("years").textContent = years;
+                document.getElementById("months").textContent = months;
+                document.getElementById("days").textContent = days;
+                document.getElementById("hours").textContent = hours;
+                document.getElementById("minutes").textContent = minutes;
+                document.getElementById("seconds").textContent = seconds;
+            }
+            setInterval(updateCounter, 1000);
+            updateCounter();
+
+            // --- CORAÇÕES CAINDO ---
+            function createHearts() {
+                const header = document.querySelector('.header');
+                if (!header) return;
+                setInterval(() => {
+                    const heart = document.createElement("div");
+                    heart.classList.add("heart");
+                    heart.textContent = "❤️";
+                    heart.style.left = Math.random() * header.offsetWidth + "px";
+                    heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                    header.appendChild(heart);
+                    setTimeout(() => heart.remove(), 5000);
+                }, 200);
+            }
+            createHearts();
+        });
     </script>
 </body>
 </html>
