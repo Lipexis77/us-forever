@@ -14,10 +14,8 @@
             text-align: center;
             background-color: #1a1a1a;
             color: white;
-            overflow-y: scroll;
             margin: 0;
             padding: 0;
-            height: 100%;
         }
 
         .header {
@@ -45,6 +43,7 @@
             font-size: 24px;
             opacity: 0.5;
             animation: fall linear infinite;
+            user-select: none; /* Impede que o coração seja selecionado */
         }
 
         @keyframes fall {
@@ -105,7 +104,7 @@
             border-color: #ff1f1f;
         }
         
-        /* === BOTÕES STEP 1 E STEP 2 - ESTILO ORIGINAL RESTAURADO === */
+        /* === BOTÕES STEP 1 E STEP 2 - ESTILO ORIGINAL DESKTOP === */
         .redirect-btn {
             position: absolute;
             top: 210px;
@@ -119,7 +118,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
-            z-index: 20; /* Garante que fiquem na frente de outros elementos */
+            z-index: 20;
         }
         .redirect-btn:hover {
             background-color: #444;
@@ -139,7 +138,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
-            z-index: 20; /* Garante que fiquem na frente de outros elementos */
+            z-index: 20;
         }
         .redirect-btn2:hover {
             background-color: #444;
@@ -216,7 +215,7 @@
             display: flex;
             justify-content: center;
             margin-top: 20px;
-            margin-bottom: 20px; /* Adiciona espaço no final da página */
+            margin-bottom: 20px;
         }
 
         .control-btn {
@@ -234,10 +233,7 @@
             background-color: #ff1f1f;
         }
 
-        /* ================================== */
         /* === ESTILO DO CARROSSEL DE VÍDEOS === */
-        /* ================================== */
-
         .carousel-container {
             max-width: 400px;
             width: 90%;
@@ -256,7 +252,7 @@
         .carousel-item {
             width: 100%;
             flex-shrink: 0;
-            height: 570px;
+            height: 570px; /* Altura para Desktop */
             object-fit: cover;
         }
 
@@ -312,16 +308,20 @@
                 font-size: 0.9em;
             }
 
-            /* AQUI ESTÁ A MÁGICA: Em telas pequenas, os botões deixam de ser absolutos */
+            /* ### A CORREÇÃO ESTÁ AQUI ### */
+            .carousel-item {
+                height: auto; /* Remove a altura fixa e deixa a proporção correta */
+            }
+            /* ########################## */
+
             .redirect-btn, .redirect-btn2 {
-                position: static; /* Remove a posição absoluta */
-                transform: none;  /* Remove qualquer transformação */
-                margin: 10px auto; /* Adiciona margem e centraliza */
-                width: 80%;       /* Define uma largura para os botões */
-                display: block;   /* Garante que ocupem a largura definida */
+                position: static;
+                transform: none;
+                margin: 10px auto;
+                width: 80%;
+                display: block;
             }
             
-            /* Novo contêiner para organizar os botões no modo responsivo */
             .navigation-buttons {
                 margin-top: 20px;
             }
@@ -362,8 +362,8 @@
 
     <div class="carousel-container">
         <div class="carousel-slides">
-            <video class="carousel-item" src="videos/video1.mp4" loop muted></video>
-            <video class="carousel-item" src="videos/video2.mp4" loop muted></video>
+            <video class="carousel-item" src="videos/video1.mp4" loop muted playsinline></video>
+            <video class="carousel-item" src="videos/video2.mp4" loop muted playsinline></video>
         </div>
         <button class="carousel-button prev" onclick="moveCarousel(-1)">❮</button>
         <button class="carousel-button next" onclick="moveCarousel(1)">❯</button>
