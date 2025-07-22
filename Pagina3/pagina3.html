@@ -108,6 +108,7 @@
         let player, ghosts, hearts, score, lives, level;
         let gameActive = true;
 
+        // Mapa do labirinto
         const map = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
@@ -135,6 +136,8 @@
         
         const isMobile = 'ontouchstart' in window;
         let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
+        let lastMoveTime = 0;
+        const moveDelay = 100; // Delay em ms entre os movimentos para não ser instantâneo
 
         function setupMobileControls() {
             canvas.addEventListener('touchstart', e => { e.preventDefault(); touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, { passive: false });
@@ -145,12 +148,10 @@
             const swipeThreshold = 30;
             const diffX = touchEndX - touchStartX;
             const diffY = touchEndY - touchStartY;
-
             if (!gameActive) {
                 if (Math.abs(diffX) < swipeThreshold && Math.abs(diffY) < swipeThreshold) { init(); gameLoop(); }
                 return;
             }
-
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > swipeThreshold) {
                     if (diffX > 0) { player.dx = 1; player.dy = 0; }
@@ -209,7 +210,6 @@
                     if (map[y][x] === 1) ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
                 }
             }
-            
             ctx.font = `${gridSize * 0.9}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -224,7 +224,9 @@
         }
 
         function update() {
-            if (!gameActive) return;
+            const now = Date.now();
+            if (now - lastMoveTime < moveDelay) return; // Controla a velocidade geral
+            lastMoveTime = 1000;
 
             const nextX = player.x + player.dx;
             const nextY = player.y + player.dy;
@@ -232,12 +234,9 @@
                 player.x = nextX;
                 player.y = nextY;
             }
-            // ### CORREÇÃO 2: REMOVIDAS AS LINHAS QUE PARAVAM O MOVIMENTO ###
-            // player.dx = 0; 
-            // player.dy = 0;
 
             ghosts.forEach(g => {
-                if (Math.random() < 0.05) {
+                if (Math.random() < 0.2) { // Chance maior de mudar de direção
                     const moves = [{dx:0, dy:1}, {dx:0, dy:-1}, {dx:1, dy:0}, {dx:-1, dy:0}];
                     const move = moves[Math.floor(Math.random() * moves.length)];
                     g.dx = move.dx; g.dy = move.dy;
@@ -246,7 +245,6 @@
                 if (!isWall(nextGhostX, nextGhostY)) { g.x = nextGhostX; g.y = nextGhostY; } 
                 else { g.dx = 0; g.dy = 0; }
             });
-            
             checkCollisions();
             draw();
         }
@@ -295,10 +293,12 @@
             }
         });
         
+        // ### CORREÇÃO DA VELOCIDADE DO JOGO ###
+        // Voltamos a usar requestAnimationFrame para a máxima fluidez
         function gameLoop() {
             if(!gameActive) return;
-            update();
-            setTimeout(gameLoop, 150); // Controla a velocidade do jogo
+            update(); // A função update agora controla o tempo entre os movimentos
+            requestAnimationFrame(gameLoop);
         }
 
         // --- INICIALIZAÇÃO DO JOGO ---
@@ -306,7 +306,6 @@
             setupMobileControls();
         }
         init();
-        // ### CORREÇÃO 1: INICIA O "MOTOR" DO JOGO AUTOMATICAMENTE ###
         gameLoop();
 
     </script>
