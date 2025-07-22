@@ -983,4 +983,16 @@ mask-image: linear-gradient(to top, transparent 40%, #00ff55 80%) !important;
 }
 .not-loaded * {
   animation-play-state: paused !important;
+
+  /* ================================== */
+/* === CSS PARA DEIXAR RESPONSIVO === */
+/* ================================== */
+@media (max-width: 600px) {
+  .flowers {
+    /* Diminui o zoom da cena para 50% (em vez dos 70% originais)
+      e sobe um pouco todo o conjunto para centralizar melhor na tela.
+    */
+    transform: scale(0.5) translateY(-15vmin);
+  }
+}
 }
