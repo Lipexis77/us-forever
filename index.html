@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Us Forever ❤️</title>
+
+    
+    <!-- Elemento de áudio -->
+    <audio id="ComoTudoDeveSer" src="Musicas/Como Tudo Deve Ser - Charlie Brown Jr..mp3" preload="auto"></audio> <!-- ajuste o caminho se necessário -->
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1a1a1a;
+            color: white;
+            overflow-y: scroll;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .header {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background-color: black;
+        }
+        .header h1 {
+            position: absolute;
+            width: 100%;
+            color: red;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 36px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .heart {
+            position: absolute;
+            color: red;
+            font-size: 24px;
+            opacity: 0.5;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            from { transform: translateY(-50px); }
+            to { transform: translateY(200px); }
+        }
+        .counter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .counter div {
+            background: #333;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
+            width: 80px;
+        }
+        .counter span {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .message {
+            width: 80%;
+            max-width: 600px;
+            margin: auto;
+            padding: 10px;
+            background: #333;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .slider {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            position: relative;
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slides video {
+            width: 320px; /* Definindo o tamanho médio para os vídeos */
+            height: 570px; /* Ajuste proporcional para manter a proporção 9:16 */
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 0 10px; /* Espaçamento entre os vídeos */
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.5);
+            color: black;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .prev { left: 0; }
+        .next { right: 0; }
+        .poetry-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center; /* Mantém os botões no centro horizontalmente */
+        }
+        .poetry-btn {
+            background-color: #333; /* Fundo do botão */
+            color: white; /* Cor do texto */
+            padding: 10px 20px;
+            font-size: 18px;
+            border: 2px solid #ff4c4c; /* Cor do contorno */
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Sombra do botão */
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            margin-right: 20px; /* Espaçamento entre os botões */
+        }
+        .poetry-btn:hover {
+            background-color: #ff4c4c; /* Muda a cor do fundo ao passar o mouse */
+            border-color: #ff1f1f; /* Muda a cor do contorno ao passar o mouse */
+        }
+        /* Estilo para o novo botão */
+        .redirect-btn {
+            position: absolute; /* Coloca o botão de forma absoluta */
+            top: 210px; /* Ajuste a altura para ficar abaixo do cabeçalho */
+            left: 20px; /* Posição à esquerda */
+            background-color: #2b2b2b; /* Fundo escuro */
+            color: white; /* Cor do texto */
+            padding: 15px 30px;
+            font-size: 20px;
+            border: 2px solid #444; /* Contorno mais claro */
+            border-radius: 50px; /* Bordas arredondadas */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra */
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .redirect-btn:hover {
+            background-color: #444; /* Escurece ao passar o mouse */
+            transform: translateY(-2px); /* Leve elevação ao passar o mouse */
+        }
+
+        /* Estilo para o novo botão */
+        .redirect-btn2 {
+            position: absolute; /* Coloca o botão de forma absoluta */
+            top: 290px; /* Ajuste a altura para ficar abaixo do cabeçalho */
+            left: 20px; /* Posição à esquerda */
+            background-color: #2b2b2b; /* Fundo escuro */
+            color: white; /* Cor do texto */
+            padding: 15px 30px;
+            font-size: 20px;
+            border: 2px solid #444; /* Contorno mais claro */
+            border-radius: 50px; /* Bordas arredondadas */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra */
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .redirect-btn2:hover {
+            background-color: #444; /* Escurece ao passar o mouse */
+            transform: translateY(-2px); /* Leve elevação ao passar o mouse */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+            width: 80%;
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            font-family: 'Georgia', serif;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .moments-message {
+            font-family: 'Georgia', serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+        }
+        /* Estilo do player do Spotify */
+    .spotify-player {
+        margin-top: 40px;
+        width: 80%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        background: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+        border-radius: 15px; /* Bordas arredondadas */
+        padding: 20px; /* Espaçamento interno */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra */
+    }
+    iframe {
+        width: 100%;
+        height: 380px;
+        border: none; /* Remover borda padrão */
+        border-radius: 10px; /* Bordas arredondadas */
+    }
+
+    .audio-controls {
+    display: flex;
+    justify-content: center; /* Centraliza o botão */
+    margin-top: 20px; /* Espaçamento acima do contêiner do botão */
+}
+
+.control-btn {
+    background-color: #ff4c4c; /* Cor de fundo do botão */
+    color: white; /* Cor do texto */
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none; /* Remove a borda padrão */
+    border-radius: 10px; /* Bordas arredondadas */
+    cursor: pointer; /* Cursor de pointer ao passar o mouse */
+    transition: background-color 0.3s; /* Transição suave na cor de fundo */
+}
+
+.control-btn:hover {
+    background-color: #ff1f1f; /* Cor do botão ao passar o mouse */
+}
+
+/* ================================== */
+/* === CSS PARA TELAS PEQUENAS ====== */
+/* ================================== */
+@media (max-width: 600px) {
+
+    /* 1. Ajustando o Título Principal */
+    .header h1 {
+        font-size: 28px; /* Diminui a fonte do título */
+    }
+
+    /* 2. Ajustando o Contador de Tempo */
+    .counter {
+        flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo */
+        gap: 15px;       /* Aumenta um pouco o espaço entre eles */
+        padding: 0 10px; /* Adiciona um respiro nas laterais */
+    }
+
+    .counter div {
+        width: auto;     /* Remove a largura fixa */
+        flex-grow: 1;    /* Faz com que ocupem o espaço disponível */
+        flex-basis: 100px; /* Define um tamanho base para cada item */
+        font-size: 0.9em;
+    }
+
+    /* 3. Ajustando o Slider de Vídeo */
+    .slider {
+        width: 100%; /* O slider ocupa toda a largura */
+    }
+
+    .slides video {
+        width: 90%;    /* O vídeo ocupa 90% da largura do slider */
+        height: auto;  /* A altura se ajusta automaticamente à proporção */
+        margin: 0 5%;  /* Centraliza o vídeo com margens laterais */
+    }
+
+    /* 4. Removendo a posição absoluta dos Botões "Step" */
+    .redirect-btn, .redirect-btn2 {
+        position: static; /* Remove a posição absoluta */
+        transform: none;  /* Remove qualquer transformação */
+        margin: 10px auto; /* Adiciona margem e centraliza */
+        width: 80%;       /* Define uma largura para os botões */
+        display: block;   /* Garante que ocupem a largura definida */
+    }
+    
+    /* 5. Organizando o contêiner dos botões */
+    .navigation-buttons {
+        margin-top: 20px;
+    }
+
+    /* 6. Ajustando o player do Spotify */
+    .spotify-player iframe {
+        height: 280px; /* Diminui um pouco a altura do player */
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Felippe & Ohanna</h1>
+    </div>
+
+    <div class="moments-message">
+        Compartilhando momentos há...
+    </div>
+
+    <div class="counter">
+        <div><span id="years"></span> Ano</div>
+        <div><span id="months"></span> Meses</div>
+        <div><span id="days"></span> Dias</div>
+        <div><span id="hours"></span> Horas</div>
+        <div><span id="minutes"></span> Minutos</div>
+        <div><span id="seconds"></span> Segundos</div>
+    </div>
+
+    <div class="message">
+        <h3>Minha mensagem para você:</h3>
+        <p>Vidinha, você é a pessoa mais especial da minha vida. Cada momento ao seu lado é um presente. Te amo! ❤️</p>
+    </div>
+
+    <div class="slider">
+        <div class="slides">
+            <video src="videos/video1.mp4" autoplay loop muted></video>
+            <video src="videos/video2.mp4" autoplay loop muted></video>
+        </div>
+    </div>
+
+    <div class="poetry-section">
+        <button class="poetry-btn" onclick="generatePoetry()">Pra você ❤️</button>
+    </div>
+
+    <div class="navigation-buttons">
+        <button class="redirect-btn" onclick="redirectToPage1()">Step 1 💐</button>
+        <button class="redirect-btn2" onclick="redirectToPage2()">Step 2 🕹️</button>
+    </div>
+
+    <div class="modal" id="poetryModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <p id="poetryText"></p>
+        </div>
+    </div>
+
+    <div class="spotify-player">
+        <iframe src="https://open.spotify.com/embed/track/3QI5bIozef0HZ1kJnA2RdT?si=d32997304b6e4338" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    
+    <div class="audio-controls">
+        <button id="playPauseBtn" class="control-btn">Play</button>
+    </div>
+
+    <script>
+        let index = 0;
+        function moveSlide(direction) {
+            const slides = document.querySelector('.slides');
+            const totalSlides = slides.children.length;
+            index = (index + direction + totalSlides) % totalSlides;
+            slides.style.transform = `translateX(${-index * 100}%)`;
+        }
+
+        function updateCounter() {
+            const startDate = new Date("2023-11-17");
+            const now = new Date();
+            
+            let diff = now - startDate;
+            let years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+            diff -= years * (1000 * 60 * 60 * 24 * 365);
+            let months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
+            diff -= months * (1000 * 60 * 60 * 24 * 30);
+            let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            diff -= days * (1000 * 60 * 60 * 24);
+            let hours = Math.floor(diff / (1000 * 60 * 60));
+            diff -= hours * (1000 * 60 * 60);
+            let minutes = Math.floor(diff / (1000 * 60));
+            diff -= minutes * (1000 * 60);
+            let seconds = Math.floor(diff / 1000);
+            
+            document.getElementById("years").textContent = years;
+            document.getElementById("months").textContent = months;
+            document.getElementById("days").textContent = days;
+            document.getElementById("hours").textContent = hours;
+            document.getElementById("minutes").textContent = minutes;
+            document.getElementById("seconds").textContent = seconds;
+        }
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        function createHearts() {
+            const header = document.querySelector('.header');
+            const headerWidth = header.offsetWidth;
+            const headerHeight = header.offsetHeight;
+            
+            setInterval(() => {
+                const heart = document.createElement("div");
+                heart.classList.add("heart");
+                heart.textContent = "❤️";
+                
+                heart.style.left = Math.random() * headerWidth + "px";
+                heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                
+                header.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 5000);
+            }, 100);
+        }
+        createHearts();
+
+        function generatePoetry() {
+            const poetryText = document.getElementById("poetryText");
+            poetryText.textContent = "Em cada olhar que trocamos, encontro um pedaço do paraíso que eu nunca soube que existia, mas que agora é meu tudo.";
+            document.getElementById("poetryModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("poetryModal").style.display = "none";
+        }
+
+        // Função para redirecionar para a outra página
+        function redirectToPage1() {
+            window.location.href = "Pagina2/pagina2.html";
+        }
+
+        // Função para redirecionar para a outra página
+        function redirectToPage2() {
+            window.location.href = "Pagina3/pagina3.html";
+        }
+
+         // Variável para controlar o estado do áudio
+        let isPlaying = false;
+        const audio = document.getElementById("ComoTudoDeveSer");
+        const playPauseBtn = document.getElementById("playPauseBtn");
+
+        // Função para alternar entre play e pause
+        playPauseBtn.addEventListener("click", function() {
+            if (isPlaying) {
+                audio.pause();
+        playPauseBtn.textContent = "Play";
+            } else {
+        audio.play().catch(error => {
+            console.log("A reprodução de áudio não pôde ser iniciada:", error);
+        });
+        playPauseBtn.textContent = "Pause";
+    }
+    isPlaying = !isPlaying; // Alterna o estado
+});
+    </script>
+</body>
+</html>

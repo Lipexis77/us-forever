@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labirinto do Coração ❤️</title>
+
+    <style>
+        /* --- ESTILIZAÇÃO BASEADA NO SEU CÓDIGO --- */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1a1a1a; /* Cor de fundo principal */
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .header-title {
+            color: red; /* Cor de destaque do título */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        #game-container {
+            background: #333; /* Fundo do container do jogo */
+            padding: 15px;
+            border-radius: 10px; /* Bordas arredondadas */
+            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2); /* Sombra clara */
+            display: inline-block;
+        }
+
+        #gameCanvas {
+            background-color: black;
+            border: 2px solid #ff4c4c; /* Borda vermelha no canvas */
+            border-radius: 5px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .game-info span {
+            color: #ff4c4c; /* Cor de destaque para os números */
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        #message-box {
+            margin-top: 20px;
+            font-family: 'Georgia', serif;
+            font-size: 1.2em;
+            color: #ccc;
+            height: 40px; /* Altura fixa para evitar que o layout pule */
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1 class="header-title">Labirinto do Coração</h1>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="440" height="440"></canvas>
+        <div class="game-info">
+            <div>Vidas: <span id="lives">3</span></div>
+            <div>Corações: <span id="score">0</span></div>
+        </div>
+    </div>
+
+    <div id="message-box">
+        Use as setas do teclado para me guiar até os corações!
+    </div>
+
+    <script>
+        // --- SCRIPT COMPLETO DO JOGO ---
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const livesEl = document.getElementById('lives');
+        const scoreEl = document.getElementById('score');
+        const messageBox = document.getElementById('message-box');
+
+        const gridSize = 20;
+        const playerSize = gridSize;
+        const playerEmoji = '🥰';
+        const heartEmoji = '❤️';
+        const ghostEmoji = '👻';
+
+        let player, ghosts, hearts, score, lives, level;
+        let gameActive = true;
+
+        // 0 = Vazio, 1 = Parede
+        const map = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+            [1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1],
+            [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1],
+            [1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1],
+            [1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1],
+            [1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1],
+            [1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1],
+            [1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+
+        function init() {
+            score = 0;
+            level = 1;
+            lives = 3;
+            gameActive = true;
+            
+            player = { x: 1, y: 1, dx: 0, dy: 0 };
+            
+            spawnCollectibles();
+            spawnGhosts();
+            updateUI();
+            
+            messageBox.textContent = "Use as setas do teclado para começar!";
+        }
+
+        function spawnCollectibles() {
+            hearts = [];
+            for (let y = 0; y < map.length; y++) {
+                for (let x = 0; x < map[y].length; x++) {
+                    if (map[y][x] === 0 && Math.random() < 0.2) { // 20% de chance de ter um coração em um espaço vazio
+                        hearts.push({ x, y });
+                    }
+                }
+            }
+            if(hearts.length === 0) spawnCollectibles(); // Garante que sempre tenha ao menos um coração
+        }
+
+        function spawnGhosts() {
+            ghosts = [];
+            for (let i = 0; i < level + 1; i++) {
+                let ghostX, ghostY;
+                do {
+                    ghostX = Math.floor(Math.random() * (map[0].length - 2)) + 1;
+                    ghostY = Math.floor(Math.random() * (map.length - 2)) + 1;
+                } while (map[ghostY][ghostX] === 1 || (ghostX < 5 && ghostY < 5)); // não nascer perto do player
+                ghosts.push({ x: ghostX, y: ghostY, dx: 0, dy: 0 });
+            }
+        }
+        
+        function updateUI() {
+            livesEl.textContent = lives;
+            scoreEl.textContent = score;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Desenha o mapa (paredes)
+            ctx.fillStyle = '#333';
+            for (let y = 0; y < map.length; y++) {
+                for (let x = 0; x < map[y].length; x++) {
+                    if (map[y][x] === 1) {
+                        ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
+                    }
+                }
+            }
+            
+            // Desenha os corações
+            ctx.font = `${gridSize}px Arial`;
+            hearts.forEach(h => ctx.fillText(heartEmoji, h.x * gridSize, (h.y + 1) * gridSize - 2));
+
+            // Desenha os fantasmas
+            ghosts.forEach(g => ctx.fillText(ghostEmoji, g.x * gridSize, (g.y + 1) * gridSize - 2));
+            
+            // Desenha o jogador
+            ctx.fillText(playerEmoji, player.x * gridSize, (player.y + 1) * gridSize - 2);
+        }
+
+        function isWall(x, y) {
+            return map[y] && map[y][x] === 1;
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            // Movimenta o jogador
+            const nextX = player.x + player.dx;
+            const nextY = player.y + player.dy;
+            if (!isWall(nextX, nextY)) {
+                player.x = nextX;
+                player.y = nextY;
+            }
+
+            // Movimenta os fantasmas (lógica simples)
+            ghosts.forEach(g => {
+                if (Math.random() < 0.05) { // Chance de mudar de direção
+                    const moves = [{dx:0, dy:1}, {dx:0, dy:-1}, {dx:1, dy:0}, {dx:-1, dy:0}];
+                    const move = moves[Math.floor(Math.random() * moves.length)];
+                    g.dx = move.dx;
+                    g.dy = move.dy;
+                }
+                const nextGhostX = g.x + g.dx;
+                const nextGhostY = g.y + g.dy;
+                if (!isWall(nextGhostX, nextGhostY)) {
+                    g.x = nextGhostX;
+                    g.y = nextGhostY;
+                } else {
+                     g.dx = 0; g.dy = 0; // Para se bater na parede
+                }
+            });
+            
+            // Checa colisões
+            checkCollisions();
+            draw();
+        }
+
+        function checkCollisions() {
+            // Colisão com corações
+            const heartIndex = hearts.findIndex(h => h.x === player.x && h.y === player.y);
+            if (heartIndex > -1) {
+                hearts.splice(heartIndex, 1);
+                score++;
+                updateUI();
+                if (hearts.length === 0) {
+                    levelUp();
+                }
+            }
+
+            // Colisão com fantasmas
+            if (ghosts.some(g => g.x === player.x && g.y === player.y)) {
+                loseLife();
+            }
+        }
+        
+        function loseLife() {
+            lives--;
+            updateUI();
+            if (lives <= 0) {
+                gameOver(false);
+            } else {
+                messageBox.textContent = `Você foi pego! Cuidado!`;
+                // Reset player e fantasmas
+                player.x = 1;
+                player.y = 1;
+                spawnGhosts();
+            }
+        }
+        
+        function levelUp() {
+            level++;
+            messageBox.textContent = `Nível ${level}! Mais rápido e mais difícil!`;
+            player.x = 1;
+            player.y = 1;
+            spawnCollectibles();
+            spawnGhosts();
+        }
+        
+        function gameOver(win) {
+            gameActive = false;
+            if (win) {
+                messageBox.textContent = "Parabéns! Você coletou todos os corações!";
+            } else {
+                messageBox.textContent = `Fim de Jogo! Pontuação: ${score}. Pressione 'Enter' para recomeçar.`;
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (!gameActive && e.key === 'Enter') {
+                init();
+                gameLoop();
+                return;
+            }
+
+            if (gameActive) {
+                if (e.key === 'ArrowUp') { player.dx = 0; player.dy = -1; }
+                else if (e.key === 'ArrowDown') { player.dx = 0; player.dy = 1; }
+                else if (e.key === 'ArrowLeft') { player.dx = -1; player.dy = 0; }
+                else if (e.key === 'ArrowRight') { player.dx = 1; player.dy = 0; }
+            }
+        });
+        
+        function gameLoop() {
+            update();
+            if(gameActive) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Inicia o jogo
+        init();
+        gameLoop();
+
+    </script>
+</body>
+</html>
