@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Us Forever ❤️</title>
 
-    
-    <!-- Elemento de áudio -->
-    <audio id="ComoTudoDeveSer" src="Musicas/Como Tudo Deve Ser - Charlie Brown Jr..mp3" preload="auto"></audio> <!-- ajuste o caminho se necessário -->
+    <audio id="ComoTudoDeveSer" src="Musicas/como-tudo-deve-ser.mp3" preload="auto"></audio>
 
     <style>
+        /* === ESTILOS GERAIS === */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -20,6 +19,7 @@
             padding: 0;
             height: 100%;
         }
+
         .header {
             position: relative;
             width: 100%;
@@ -27,6 +27,7 @@
             overflow: hidden;
             background-color: black;
         }
+
         .header h1 {
             position: absolute;
             width: 100%;
@@ -37,6 +38,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
         .heart {
             position: absolute;
             color: red;
@@ -44,16 +46,19 @@
             opacity: 0.5;
             animation: fall linear infinite;
         }
+
         @keyframes fall {
             from { transform: translateY(-50px); }
             to { transform: translateY(200px); }
         }
+
         .counter {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin: 20px 0;
         }
+
         .counter div {
             background: #333;
             padding: 10px;
@@ -61,11 +66,13 @@
             box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
             width: 80px;
         }
+
         .counter span {
             display: block;
             font-size: 20px;
             font-weight: bold;
         }
+
         .message {
             width: 80%;
             max-width: 600px;
@@ -76,96 +83,69 @@
             box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
             color: white;
         }
-        .slider {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-top: 40px;
-            position: relative;
-        }
-        .slides {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-        .slides video {
-            width: 320px; /* Definindo o tamanho médio para os vídeos */
-            height: 570px; /* Ajuste proporcional para manter a proporção 9:16 */
-            object-fit: cover;
-            border-radius: 10px;
-            margin: 0 10px; /* Espaçamento entre os vídeos */
-        }
-        .prev, .next {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(255, 255, 255, 0.5);
-            color: black;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
-        .prev { left: 0; }
-        .next { right: 0; }
+
         .poetry-section {
             margin-top: 40px;
-            display: flex;
-            justify-content: center; /* Mantém os botões no centro horizontalmente */
         }
+        
         .poetry-btn {
-            background-color: #333; /* Fundo do botão */
-            color: white; /* Cor do texto */
+            background-color: #333;
+            color: white;
             padding: 10px 20px;
             font-size: 18px;
-            border: 2px solid #ff4c4c; /* Cor do contorno */
+            border: 2px solid #ff4c4c;
             border-radius: 10px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Sombra do botão */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
             cursor: pointer;
             transition: background-color 0.3s, border-color 0.3s;
-            margin-right: 20px; /* Espaçamento entre os botões */
         }
+        
         .poetry-btn:hover {
-            background-color: #ff4c4c; /* Muda a cor do fundo ao passar o mouse */
-            border-color: #ff1f1f; /* Muda a cor do contorno ao passar o mouse */
+            background-color: #ff4c4c;
+            border-color: #ff1f1f;
         }
-        /* Estilo para o novo botão */
+        
+        /* === BOTÕES STEP 1 E STEP 2 - ESTILO ORIGINAL RESTAURADO === */
         .redirect-btn {
-            position: absolute; /* Coloca o botão de forma absoluta */
-            top: 210px; /* Ajuste a altura para ficar abaixo do cabeçalho */
-            left: 20px; /* Posição à esquerda */
-            background-color: #2b2b2b; /* Fundo escuro */
-            color: white; /* Cor do texto */
+            position: absolute;
+            top: 210px;
+            left: 20px;
+            background-color: #2b2b2b;
+            color: white;
             padding: 15px 30px;
             font-size: 20px;
-            border: 2px solid #444; /* Contorno mais claro */
-            border-radius: 50px; /* Bordas arredondadas */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra */
+            border: 2px solid #444;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
+            z-index: 20; /* Garante que fiquem na frente de outros elementos */
         }
         .redirect-btn:hover {
-            background-color: #444; /* Escurece ao passar o mouse */
-            transform: translateY(-2px); /* Leve elevação ao passar o mouse */
+            background-color: #444;
+            transform: translateY(-2px);
         }
 
-        /* Estilo para o novo botão */
         .redirect-btn2 {
-            position: absolute; /* Coloca o botão de forma absoluta */
-            top: 290px; /* Ajuste a altura para ficar abaixo do cabeçalho */
-            left: 20px; /* Posição à esquerda */
-            background-color: #2b2b2b; /* Fundo escuro */
-            color: white; /* Cor do texto */
+            position: absolute;
+            top: 290px;
+            left: 20px;
+            background-color: #2b2b2b;
+            color: white;
             padding: 15px 30px;
             font-size: 20px;
-            border: 2px solid #444; /* Contorno mais claro */
-            border-radius: 50px; /* Bordas arredondadas */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra */
+            border: 2px solid #444;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
+            z-index: 20; /* Garante que fiquem na frente de outros elementos */
         }
         .redirect-btn2:hover {
-            background-color: #444; /* Escurece ao passar o mouse */
-            transform: translateY(-2px); /* Leve elevação ao passar o mouse */
+            background-color: #444;
+            transform: translateY(-2px);
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -178,6 +158,7 @@
             align-items: center;
             z-index: 1000;
         }
+
         .modal-content {
             background: #333;
             padding: 20px;
@@ -189,123 +170,176 @@
             color: white;
             text-align: center;
             font-family: 'Georgia', serif;
+            position: relative;
         }
+
         .close-btn {
             position: absolute;
             top: 10px;
-            right: 10px;
+            right: 15px;
             background: none;
             border: none;
             color: white;
             font-size: 30px;
             cursor: pointer;
         }
+        
         .moments-message {
             font-family: 'Georgia', serif;
             font-size: 36px;
             font-weight: bold;
             color: white;
+            margin-top: 20px;
             margin-bottom: 20px;
         }
-        /* Estilo do player do Spotify */
-    .spotify-player {
-        margin-top: 40px;
-        width: 80%;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        background: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
-        border-radius: 15px; /* Bordas arredondadas */
-        padding: 20px; /* Espaçamento interno */
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra */
-    }
-    iframe {
-        width: 100%;
-        height: 380px;
-        border: none; /* Remover borda padrão */
-        border-radius: 10px; /* Bordas arredondadas */
-    }
 
-    .audio-controls {
-    display: flex;
-    justify-content: center; /* Centraliza o botão */
-    margin-top: 20px; /* Espaçamento acima do contêiner do botão */
-}
+        .spotify-player {
+            margin-top: 40px;
+            width: 80%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
 
-.control-btn {
-    background-color: #ff4c4c; /* Cor de fundo do botão */
-    color: white; /* Cor do texto */
-    padding: 10px 20px;
-    font-size: 18px;
-    border: none; /* Remove a borda padrão */
-    border-radius: 10px; /* Bordas arredondadas */
-    cursor: pointer; /* Cursor de pointer ao passar o mouse */
-    transition: background-color 0.3s; /* Transição suave na cor de fundo */
-}
+        iframe {
+            width: 100%;
+            height: 380px;
+            border: none;
+            border-radius: 10px;
+        }
 
-.control-btn:hover {
-    background-color: #ff1f1f; /* Cor do botão ao passar o mouse */
-}
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px; /* Adiciona espaço no final da página */
+        }
 
-/* ================================== */
-/* === CSS PARA TELAS PEQUENAS ====== */
-/* ================================== */
-@media (max-width: 600px) {
+        .control-btn {
+            background-color: #ff4c4c;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .control-btn:hover {
+            background-color: #ff1f1f;
+        }
 
-    /* 1. Ajustando o Título Principal */
-    .header h1 {
-        font-size: 28px; /* Diminui a fonte do título */
-    }
+        /* ================================== */
+        /* === ESTILO DO CARROSSEL DE VÍDEOS === */
+        /* ================================== */
 
-    /* 2. Ajustando o Contador de Tempo */
-    .counter {
-        flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo */
-        gap: 15px;       /* Aumenta um pouco o espaço entre eles */
-        padding: 0 10px; /* Adiciona um respiro nas laterais */
-    }
+        .carousel-container {
+            max-width: 400px;
+            width: 90%;
+            margin: 40px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
 
-    .counter div {
-        width: auto;     /* Remove a largura fixa */
-        flex-grow: 1;    /* Faz com que ocupem o espaço disponível */
-        flex-basis: 100px; /* Define um tamanho base para cada item */
-        font-size: 0.9em;
-    }
+        .carousel-slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
 
-    /* 3. Ajustando o Slider de Vídeo */
-    .slider {
-        width: 100%; /* O slider ocupa toda a largura */
-    }
+        .carousel-item {
+            width: 100%;
+            flex-shrink: 0;
+            height: 570px;
+            object-fit: cover;
+        }
 
-    .slides video {
-        width: 90%;    /* O vídeo ocupa 90% da largura do slider */
-        height: auto;  /* A altura se ajusta automaticamente à proporção */
-        margin: 0 5%;  /* Centraliza o vídeo com margens laterais */
-    }
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
 
-    /* 4. Removendo a posição absoluta dos Botões "Step" */
-    .redirect-btn, .redirect-btn2 {
-        position: static; /* Remove a posição absoluta */
-        transform: none;  /* Remove qualquer transformação */
-        margin: 10px auto; /* Adiciona margem e centraliza */
-        width: 80%;       /* Define uma largura para os botões */
-        display: block;   /* Garante que ocupem a largura definida */
-    }
-    
-    /* 5. Organizando o contêiner dos botões */
-    .navigation-buttons {
-        margin-top: 20px;
-    }
+        .carousel-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
 
-    /* 6. Ajustando o player do Spotify */
-    .spotify-player iframe {
-        height: 280px; /* Diminui um pouco a altura do player */
-    }
-}
+        .carousel-button.prev {
+            left: 10px;
+        }
+
+        .carousel-button.next {
+            right: 10px;
+        }
+
+        /* ================================== */
+        /* === CSS PARA TELAS PEQUENAS ====== */
+        /* ================================== */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .counter {
+                flex-wrap: wrap;
+                gap: 15px;
+                padding: 0 10px;
+            }
+
+            .counter div {
+                width: auto;
+                flex-grow: 1;
+                flex-basis: 100px;
+                font-size: 0.9em;
+            }
+
+            /* AQUI ESTÁ A MÁGICA: Em telas pequenas, os botões deixam de ser absolutos */
+            .redirect-btn, .redirect-btn2 {
+                position: static; /* Remove a posição absoluta */
+                transform: none;  /* Remove qualquer transformação */
+                margin: 10px auto; /* Adiciona margem e centraliza */
+                width: 80%;       /* Define uma largura para os botões */
+                display: block;   /* Garante que ocupem a largura definida */
+            }
+            
+            /* Novo contêiner para organizar os botões no modo responsivo */
+            .navigation-buttons {
+                margin-top: 20px;
+            }
+
+            .spotify-player iframe {
+                height: 280px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>Felippe & Ohanna</h1>
+    </div>
+
+    <div class="navigation-buttons">
+        <button class="redirect-btn" onclick="redirectToPage1()">Step 1 💐</button>
+        <button class="redirect-btn2" onclick="redirectToPage2()">Step 2 🕹️</button>
     </div>
 
     <div class="moments-message">
@@ -326,20 +360,17 @@
         <p>Vidinha, você é a pessoa mais especial da minha vida. Cada momento ao seu lado é um presente. Te amo! ❤️</p>
     </div>
 
-    <div class="slider">
-        <div class="slides">
-            <video src="videos/video1.mp4" autoplay loop muted></video>
-            <video src="videos/video2.mp4" autoplay loop muted></video>
+    <div class="carousel-container">
+        <div class="carousel-slides">
+            <video class="carousel-item" src="videos/video1.mp4" loop muted></video>
+            <video class="carousel-item" src="videos/video2.mp4" loop muted></video>
         </div>
+        <button class="carousel-button prev" onclick="moveCarousel(-1)">❮</button>
+        <button class="carousel-button next" onclick="moveCarousel(1)">❯</button>
     </div>
 
     <div class="poetry-section">
         <button class="poetry-btn" onclick="generatePoetry()">Pra você ❤️</button>
-    </div>
-
-    <div class="navigation-buttons">
-        <button class="redirect-btn" onclick="redirectToPage1()">Step 1 💐</button>
-        <button class="redirect-btn2" onclick="redirectToPage2()">Step 2 🕹️</button>
     </div>
 
     <div class="modal" id="poetryModal">
@@ -358,29 +389,60 @@
     </div>
 
     <script>
-        let index = 0;
-        function moveSlide(direction) {
-            const slides = document.querySelector('.slides');
-            const totalSlides = slides.children.length;
-            index = (index + direction + totalSlides) % totalSlides;
-            slides.style.transform = `translateX(${-index * 100}%)`;
+        // LÓGICA DO CARROSSEL
+        const slidesContainer = document.querySelector(".carousel-slides");
+        const videoItems = document.querySelectorAll(".carousel-item");
+        let currentIndex = 0;
+
+        function manageVideoPlayback() {
+            videoItems.forEach((video, index) => {
+                if (index === currentIndex) {
+                    video.play().catch(error => console.log("Autoplay bloqueado, esperando interação."));
+                } else {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            });
         }
 
+        function updateCarousel() {
+            if (slidesContainer) {
+                const offset = -currentIndex * 100;
+                slidesContainer.style.transform = `translateX(${offset}%)`;
+                manageVideoPlayback();
+            }
+        }
+
+        function moveCarousel(direction) {
+            if (videoItems.length > 0) {
+                videoItems[currentIndex].pause();
+                const totalItems = videoItems.length;
+                currentIndex = (currentIndex + direction + totalItems) % totalItems;
+                updateCarousel();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (videoItems.length > 0) {
+                updateCarousel();
+            }
+        });
+
+        // SUAS OUTRAS FUNÇÕES
         function updateCounter() {
-            const startDate = new Date("2023-11-17");
+            const startDate = new Date("2023-11-17T00:00:00");
             const now = new Date();
-            
             let diff = now - startDate;
-            let years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
-            diff -= years * (1000 * 60 * 60 * 24 * 365);
-            let months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
-            diff -= months * (1000 * 60 * 60 * 24 * 30);
-            let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            diff -= days * (1000 * 60 * 60 * 24);
-            let hours = Math.floor(diff / (1000 * 60 * 60));
-            diff -= hours * (1000 * 60 * 60);
-            let minutes = Math.floor(diff / (1000 * 60));
-            diff -= minutes * (1000 * 60);
+            let years = Math.floor(diff / 31536000000);
+            diff -= years * 31536000000;
+            let months = Math.floor(diff / 2628000000);
+            diff -= months * 2628000000;
+            let days = Math.floor(diff / 86400000);
+            diff -= days * 86400000;
+            let hours = Math.floor(diff / 3600000);
+            diff -= hours * 3600000;
+            let minutes = Math.floor(diff / 60000);
+            diff -= minutes * 60000;
             let seconds = Math.floor(diff / 1000);
             
             document.getElementById("years").textContent = years;
@@ -395,27 +457,21 @@
 
         function createHearts() {
             const header = document.querySelector('.header');
-            const headerWidth = header.offsetWidth;
-            const headerHeight = header.offsetHeight;
-            
+            if (!header) return;
             setInterval(() => {
                 const heart = document.createElement("div");
                 heart.classList.add("heart");
                 heart.textContent = "❤️";
-                
-                heart.style.left = Math.random() * headerWidth + "px";
+                heart.style.left = Math.random() * header.offsetWidth + "px";
                 heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
-                
                 header.appendChild(heart);
-                
                 setTimeout(() => heart.remove(), 5000);
-            }, 100);
+            }, 200);
         }
         createHearts();
 
         function generatePoetry() {
-            const poetryText = document.getElementById("poetryText");
-            poetryText.textContent = "Em cada olhar que trocamos, encontro um pedaço do paraíso que eu nunca soube que existia, mas que agora é meu tudo.";
+            document.getElementById("poetryText").textContent = "Em cada olhar que trocamos, encontro um pedaço do paraíso que eu nunca soube que existia, mas que agora é meu tudo.";
             document.getElementById("poetryModal").style.display = "flex";
         }
 
@@ -423,34 +479,30 @@
             document.getElementById("poetryModal").style.display = "none";
         }
 
-        // Função para redirecionar para a outra página
         function redirectToPage1() {
             window.location.href = "Pagina2/pagina2.html";
         }
 
-        // Função para redirecionar para a outra página
         function redirectToPage2() {
             window.location.href = "Pagina3/pagina3.html";
         }
 
-         // Variável para controlar o estado do áudio
         let isPlaying = false;
         const audio = document.getElementById("ComoTudoDeveSer");
         const playPauseBtn = document.getElementById("playPauseBtn");
 
-        // Função para alternar entre play e pause
-        playPauseBtn.addEventListener("click", function() {
-            if (isPlaying) {
-                audio.pause();
-        playPauseBtn.textContent = "Play";
-            } else {
-        audio.play().catch(error => {
-            console.log("A reprodução de áudio não pôde ser iniciada:", error);
-        });
-        playPauseBtn.textContent = "Pause";
-    }
-    isPlaying = !isPlaying; // Alterna o estado
-});
+        if (playPauseBtn) {
+            playPauseBtn.addEventListener("click", function() {
+                if (isPlaying) {
+                    audio.pause();
+                    playPauseBtn.textContent = "Play";
+                } else {
+                    audio.play().catch(error => console.log("A reprodução de áudio não pôde ser iniciada:", error));
+                    playPauseBtn.textContent = "Pause";
+                }
+                isPlaying = !isPlaying;
+            });
+        }
     </script>
 </body>
 </html>
